@@ -32,13 +32,15 @@ public class KeyWordsAction {
         if (browserName.equals("chrome")) {
             System.setProperty("webdriver.chrome.diver", "D:\\WebDriver\\chromedriver.exe");
             driver = new ChromeDriver();
-
+            Log.info("chrome浏览器实例已经声明");
         } else if (browserName.equals("firefox")) {
             System.setProperty("webdriver.gecko.driver", "D:\\WebDriver\\geckodriver.exe");
             driver = new FirefoxDriver();
+            Log.info("firefox浏览器实例已经声明");
         } else {
             System.setProperty("webdriver.edge.driver", "D:\\WebDriver\\msedgedriver.exe");
             driver = new EdgeDriver();
+            Log.info("edge浏览器实例已经声明");
         }
     }
 
@@ -48,13 +50,13 @@ public class KeyWordsAction {
         Log.info("浏览器访问网址：" + url);
     }
 
-    public static void switch_frame(String string) {
+    public static void switch_frame(String locatorExpression ,String string) {
         try {
-            driver.switchTo().frame(driver.findElement(objectMap.getLocator("login.iframe")));
-            Log.info("进入iframe");
+            driver.switchTo().frame(driver.findElement(objectMap.getLocator(locatorExpression)));
+            Log.info("进入iframe"+locatorExpression+"成功");
         } catch (Exception e) {
             ExcelUtil.testResult = false;
-            Log.info("进入首页iframe时出现异常，具体异常信息：" + e.getMessage());
+            Log.info("进入frame"+locatorExpression+"失败，具体异常信息：" + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -102,7 +104,7 @@ public class KeyWordsAction {
     }
 
     //此方法的名称对应Excel文件关键字列中的default_frame
-    public static void default_frame(String string) {
+    public static void default_frame(String string1,String string2) {
         try {
             driver.switchTo().defaultContent();
             Log.info("退出iframe");
