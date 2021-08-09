@@ -1,7 +1,7 @@
 package cn.gloryroad.util;
 
+
 import cn.gloryroad.configuration.Constants;
-import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -14,11 +14,13 @@ import java.io.FileOutputStream;
 
 //主要实现扩展名为“.xlsx”的Excel文件操作
 public class ExcelUtil {
+    public static boolean testResult;
     private static XSSFSheet ExcelSheet;
     private static XSSFWorkbook ExcelWBook;
     private static XSSFCell Cell;
     private static XSSFRow Row;
-    public static boolean testResult;
+
+
 
     //设定要操作的文件路径和Excel文件中的Sheet
     public static void setExcelFile(String path, String SheetName) throws Exception {

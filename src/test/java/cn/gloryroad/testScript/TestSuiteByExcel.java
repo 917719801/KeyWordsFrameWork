@@ -9,6 +9,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import javax.security.auth.login.LoginContext;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
@@ -16,12 +17,14 @@ import java.lang.reflect.Method;
 public class TestSuiteByExcel {
     public static Method method[];
     public static String keyword;
+    public static String locatorExpression;
     public static String value;
     public static KeyWordsAction keyWordsaction;
     public static int testStep;
     public static int testLastStep;
     public static String testCaseID;
     public static String testCaseRunFlag;
+ 
 
 
     @Test
@@ -45,6 +48,7 @@ public class TestSuiteByExcel {
             //读取”测试用例集合“sheet中每行测试用例序号
             testCaseRunFlag = ExcelUtil.getCellData(Constants.Sheet_TestSuite, testCaseNo, Constants.Col_RunFlag);
 //            System.out.println(testCaseRunFlag);
+
             //判断“是否运行”列中的值为y，y则执行测试用例中的所有步骤
             if (testCaseRunFlag.equalsIgnoreCase("y")) {
                 Log.startTEstCase(testCaseID);
@@ -59,9 +63,15 @@ public class TestSuiteByExcel {
                 for (; testStep < testLastStep; testStep++) {
                     //从“发送邮件”Sheet中读取关键字和操作值调用execute_Actions方法
                     keyword = ExcelUtil.getCellData(Constants.Sheet_TestSteps, testStep, Constants.Col_KeyWordAction);
-                    System.out.println(keyword);
+                    Log.info("读取的关键字是：" + keyword);
+
+                    locatorExpression = ExcelUtil.getCellData(Constants.Sheet_TestSteps, testStep, Constants.Col_LocatorExpression);
+                    Log.info("读取的操作元素的定位表达式是：" + locatorExpression);
+
                     value = ExcelUtil.getCellData(Constants.Sheet_TestSteps, testStep, Constants.Col_ActionValue);
-                    System.out.println(value);
+                    Log.info("读取的操作值是：" + value);
+
+
                     execute_Actions();
                     if (ExcelUtil.testResult == false) {
                         ExcelUtil.setCellData(Constants.Sheet_TestSuite, testCaseNo, Constants.Col_TestSuiteTestResult, "测试执行失败");
@@ -83,13 +93,13 @@ public class TestSuiteByExcel {
             for (int i = 0; i < method.length; i++) {
                 //使用反射的方法，找到关键字对应的测试方法并将value作为测试方法的函数值进行调用
                 if (method[i].getName().equals(keyword)) {
-                    method[i].invoke(keyWordsaction, value);
+                    method[i].invoke(keyWordsaction, locatorExpression, value);
                     if (ExcelUtil.testResult == true) {
                         ExcelUtil.setCellData(Constants.Sheet_TestSteps, testStep, Constants.Col_TestStepTestResult, "测试步骤执行成功");
                         break;
                     } else {
                         ExcelUtil.setCellData(Constants.Sheet_TestSteps, testStep, Constants.Col_TestStepTestResult, "测试步骤执行失败");
-                        KeyWordsAction.close_browser("");
+                        KeyWordsAction.close_browser("", "");
                         break;
                     }
                 }
